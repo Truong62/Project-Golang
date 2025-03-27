@@ -1,0 +1,31 @@
+# Ignore compiled binary files
+/bin/
+/build/
+*.exe
+*.out
+*.app
+
+# Ignore Go module dependencies and cache
+/pkg/
+/vendor/
+go.sum
+
+# Ignore environment variables files
+.env
+.env.local
+.env.production
+.env.development
+
+# Ignore log and temporary files
+*.log
+*.tmp
+
+# Ignore IDE and editor config files (VSCode, JetBrains, GoLand)
+.vscode/
+.idea/
+*.swp
+
+# Ignore database dump files and migration logs (if applicable)
+dump.sql
+/migrations/*.log
+/migrations/*.tmp
