@@ -1,6 +1,7 @@
 package main
 
 import (
+	"example.com/crud-go/config"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,8 +11,8 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
+	envErr := godotenv.Load()
+	if envErr != nil {
 		log.Println("error not read .env")
 	}
 
@@ -19,14 +20,18 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	config.ConnectDatabase()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Hello!!! Go running ... 🚀")
+		_, err := fmt.Fprintln(w, "Hello!!! Go running ... 🚀")
+		if err != nil {
+			return
+		}
 	})
 
 	log.Printf("Server http://localhost:%s 🚀", port)
-	err = http.ListenAndServe(":"+port, nil)
-	if err != nil {
-		log.Fatal("error server: ", err)
+	envErr = http.ListenAndServe(":"+port, nil)
+	if envErr != nil {
+		log.Fatal("error server: ", envErr)
 	}
 }
