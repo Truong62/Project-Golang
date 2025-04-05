@@ -19,6 +19,8 @@ go.sum
 # Ignore log and temporary files
 *.log
 *.tmp
+/tmp
+/tmp/
 
 # Ignore IDE and editor config files (VSCode, JetBrains, GoLand)
 .vscode/

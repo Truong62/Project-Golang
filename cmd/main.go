@@ -2,7 +2,7 @@ package main
 
 import (
 	"example.com/crud-go/config"
-	"fmt"
+	"example.com/crud-go/routes"
 	"log"
 	"net/http"
 	"os"
@@ -20,14 +20,9 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	log.Println("Starting server...")
 	config.ConnectDatabase()
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, err := fmt.Fprintln(w, "Hello!!! Go running ... 🚀")
-		if err != nil {
-			return
-		}
-	})
+	routes.SetupRoutes()
 
 	log.Printf("Server http://localhost:%s 🚀", port)
 	envErr = http.ListenAndServe(":"+port, nil)

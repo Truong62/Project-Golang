@@ -2,6 +2,7 @@ package config
 
 import (
 	"database/sql"
+	"example.com/crud-go/models"
 	"fmt"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
@@ -34,10 +35,15 @@ func ConnectDatabase() {
 
 	//save database global
 	DB = db
+
+	err = db.AutoMigrate(&models.Todo{})
+	if err != nil {
+		return
+	}
 }
 
 func createDatabaseIfNotExists() {
-	// Connect Postgres
+	// Connect to Postgres
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s port=%s sslmode=disable",
 		os.Getenv("DB_HOST"),
@@ -46,23 +52,36 @@ func createDatabaseIfNotExists() {
 		os.Getenv("DB_PORT"),
 	)
 
-	db, err := sql.Open("postgres", dsn)
+	drivenName := os.Getenv("DB_USER")
+	db, err := sql.Open(drivenName, dsn)
 	if err != nil {
 		log.Fatalf("Failed to connect to PostgreSQL server: %v", err)
 	}
 	defer func(db *sql.DB) {
 		err := db.Close()
 		if err != nil {
-
+			log.Printf("Error closing database: %v", err)
 		}
 	}(db)
 
 	dbName := os.Getenv("DB_NAME")
 
+	// Check if the database exists
+	var exists bool
+	err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM pg_database WHERE datname=$1)", dbName).Scan(&exists)
+	if err != nil {
+		log.Fatalf("Failed to check if database exists: %v", err)
+	}
+
+	if exists {
+		log.Printf("Database already exists: %s", dbName)
+		return
+	}
+
 	// Create database if not found
 	_, err = db.Exec("CREATE DATABASE " + dbName)
 	if err != nil {
-		log.Printf("Warning (ignore if already exists): %v", err)
+		log.Printf("Error creating database: %v", err)
 	} else {
 		log.Println("Database created:", dbName)
 	}

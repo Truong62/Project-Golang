@@ -1,28 +1,31 @@
-# Golang Backend Project 🚀
+# CRUD Go Backend Project 🚀
 
-This is a backend project built with [Golang](https://go.dev/). It follows clean architecture principles and is designed for scalability, maintainability, and performance.
+This is a backend project built with [Golang](https://go.dev/). The project is designed for simple CRUD (Create, Read, Update, Delete) operations with scalability and maintainability in mind.
 
 ---
 
 ## 📂 Project Structure
 
 ```
-/myproject  
+/CRUD-Go  
 │── /cmd                # Application entry point  
 │    ├── main.go        # Main executable  
-│── /config             # Configuration files (YAML, JSON, ENV)  
-│── /internal           # Core business logic  
-│    ├── /domain        # Entity definitions and interfaces  
-│    ├── /usecase       # Business logic  
-│    ├── /repository    # Database interactions  
-│    ├── /delivery      # API handlers (REST, gRPC, GraphQL)  
-│── /pkg                # Shared utilities (middleware, logger, auth)  
-│── /migrations         # Database migration files  
+│── /config             # Configuration  
+│    ├── database.go    # Database connection config  
+│── /controllers        # Request handlers  
+│    ├── todo-controler.go # Todo controller  
+│── /models             # Data structure definitions  
+│    ├── todo.go        # Todo model  
+│── /repository         # Database interactions  
+│    ├── todo_repository.go # Todo repository  
+│── /routes             # Route definitions  
+│    ├── router.go      # Application router  
 │── /test               # Unit & integration tests  
+│── .air.toml           # Air configuration (hot-reload)  
 │── go.mod              # Go module definition  
-│── Dockerfile          # Docker setup  
+│── go.sum              # Dependencies checksum  
+│── Dockerfile          # Docker configuration  
 │── .env                # Environment variables  
-│── README.md           # Project documentation  
 ```
 
 ---
@@ -39,7 +42,7 @@ If not installed, download it from [golang.org/dl](https://golang.org/dl/).
 ### 2️⃣ Clone the repository
 ```sh
 git clone https://github.com/your/repo.git
-cd myproject
+cd CRUD-Go
 ```
 
 ### 3️⃣ Initialize the Go module
@@ -50,6 +53,11 @@ go mod tidy
 ### 4️⃣ Run the application
 ```sh
 go run cmd/main.go
+```
+
+Or use Air for hot-reloading during development:
+```sh
+air
 ```
 
 The server will start at:
@@ -66,7 +74,7 @@ http://localhost:8080
 | `github.com/joho/godotenv` | Load environment variables from `.env` |
 | `github.com/gin-gonic/gin` | HTTP web framework for APIs |
 | `gorm.io/gorm`             | ORM for database operations |
-| `github.com/sirupsen/logrus` | Logging utility |
+| `gorm.io/driver/mysql`     | MySQL driver for GORM |
 
 To install all dependencies:
 ```sh
@@ -79,11 +87,11 @@ go mod tidy
 
 1. Build the Docker image:
    ```sh
-   docker build -t myproject .
+   docker build -t crud-go .
    ```
 2. Run the container:
    ```sh
-   docker run -p 8080:8080 --env-file .env myproject
+   docker run -p 8080:8080 --env-file .env crud-go
    ```
 
 ---
@@ -92,8 +100,11 @@ go mod tidy
 
 | Method | Endpoint | Description |
 |--------|---------|-------------|
-| `GET`  | `/`     | Health check |
-| `POST` | `/users` | Create user |
+| `GET`  | `/api/todos`     | Get all todos |
+| `POST` | `/api/todos` | Create a new todo |
+| `GET`  | `/api/todos/:id` | Get todo by ID |
+| `PUT`  | `/api/todos/:id` | Update a todo |
+| `DELETE` | `/api/todos/:id` | Delete a todo |
 
 ---
 
