@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"example.com/crud-go/config"
-	"example.com/crud-go/models"
+	"Project-Golang/config"
+	"Project-Golang/models"
 )
 
 type TodoRepository struct{}

@@ -1,14 +1,15 @@
 package config
 
 import (
+	"Project-Golang/models"
 	"database/sql"
-	"example.com/crud-go/models"
 	"fmt"
+	"log"
+	"os"
+
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
-	"os"
 )
 
 // DB is global for database access

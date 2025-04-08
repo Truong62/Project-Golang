@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"example.com/crud-go/controllers"
+	"Project-Golang/controllers"
 	"fmt"
 	"net/http"
 )

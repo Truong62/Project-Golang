@@ -1,8 +1,8 @@
 package main
 
 import (
-	"example.com/crud-go/config"
-	"example.com/crud-go/routes"
+	"Project-Golang/config"
+	"Project-Golang/routes"
 	"log"
 	"net/http"
 	"os"

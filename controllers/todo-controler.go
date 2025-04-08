@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
-	"example.com/crud-go/models"
-	"example.com/crud-go/repository"
+	"Project-Golang/models"
+	"Project-Golang/repository"
 	"fmt"
 	"net/http"
 )
