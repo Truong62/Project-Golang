@@ -17,7 +17,7 @@ func init() {
 
 type Todo struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
-	Title     string    `gorm:"index unique;not null" json:"title" validate:"required,min=10" json:"title"`
+	Title     string    `gorm:"index unique;not null" json:"title" validate:"required,min=10"`
 	Completed bool      `json:"completed"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

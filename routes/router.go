@@ -8,11 +8,14 @@ import (
 
 func SetupRoutes() {
 	http.HandleFunc("/todos", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodPost {
+		switch r.Method {
+		case http.MethodPost:
 			controllers.CreateTodoList(w, r)
-			return
+		case http.MethodGet:
+			controllers.GetTodoList(w, r)
+		default:
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
