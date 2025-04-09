@@ -1,9 +1,10 @@
 package models
 
 import (
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
-	"time"
 )
 
 var validate *validator.Validate
@@ -11,6 +12,8 @@ var validate *validator.Validate
 func init() {
 	validate = validator.New()
 }
+
+// test
 
 type Todo struct {
 	ID        uint      `gorm:"primaryKey" json:"id"`
