@@ -22,6 +22,8 @@ func SetupRoutes() {
 		switch r.Method {
 		case http.MethodPut:
 			controllers.PutTodoById(w, r)
+		case http.MethodDelete:
+			controllers.DeleteTodoById(w, r)
 		default:
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 		}

@@ -38,3 +38,8 @@ func (r *TodoRepository) UpdateTodoById(id string, todo *models.Todo) error {
 	err := config.DB.First(todo, id).Error
 	return err
 }
+
+func (r *TodoRepository) DeleteTodoById(id string) error {
+	result := config.DB.Delete(&models.Todo{}, id)
+	return result.Error
+}

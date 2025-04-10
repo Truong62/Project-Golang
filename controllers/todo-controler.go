@@ -105,3 +105,23 @@ func PutTodoById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func DeleteTodoById(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	parts := strings.Split(path, "/")
+	id := parts[len(parts)-1]
+
+	err := todoRepo.DeleteTodoById(id)
+	if err != nil {
+		http.Error(w, "Error deleting todo", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(models.Response{
+		Success: true,
+		Data:    "Todo deleted successfully",
+	}); err != nil {
+		return
+	}
+}
