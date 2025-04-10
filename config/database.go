@@ -53,7 +53,7 @@ func createDatabaseIfNotExists() {
 		os.Getenv("DB_PORT"),
 	)
 
-	drivenName := os.Getenv("DB_USER")
+	drivenName := "postgres"
 	db, err := sql.Open(drivenName, dsn)
 	if err != nil {
 		log.Fatalf("Failed to connect to PostgreSQL server: %v", err)

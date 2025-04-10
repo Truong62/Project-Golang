@@ -12,6 +12,7 @@ go.sum
 
 # Ignore environment variables files
 .env
+.ENV
 .env.local
 .env.production
 .env.development

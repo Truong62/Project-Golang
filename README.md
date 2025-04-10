@@ -85,13 +85,34 @@ go mod tidy
 
 ## 🚀 Running with Docker
 
-1. Build the Docker image:
+### Using Docker Compose (Recommended)
+
+1. Create `.ENV` file from template:
+   ```sh
+   cp .env.example .ENV
+   ```
+
+2. Edit the `.ENV` file with your information
+
+3. Run the application with Docker Compose:
+   ```sh
+   docker-compose up -d
+   ```
+
+4. Stop the application:
+   ```sh
+   docker-compose down
+   ```
+
+### Using Docker Individually
+
+1. Build Docker image:
    ```sh
    docker build -t crud-go .
    ```
-2. Run the container:
+2. Run container:
    ```sh
-   docker run -p 8080:8080 --env-file .env crud-go
+   docker run -p 8080:8080 --env-file .ENV crud-go
    ```
 
 ---

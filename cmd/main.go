@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	envErr := godotenv.Load()
+	envErr := godotenv.Load(".ENV")
 	if envErr != nil {
 		log.Println("error not read .env")
 	}
