@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var todoRepo = &repository.TodoRepository{}
@@ -66,6 +67,41 @@ func GetTodoList(w http.ResponseWriter, r *http.Request) {
 
 	if err := json.NewEncoder(w).Encode(todos); err != nil {
 		http.Error(w, "Error encode data", http.StatusInternalServerError)
+		return
+	}
+}
+
+func PutTodoById(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	parts := strings.Split(path, "/")
+	id := parts[len(parts)-1]
+
+	log.Printf("DEBUG: Updating todo with ID: %s", id)
+
+	var todo models.Todo
+
+	if err := json.NewDecoder(r.Body).Decode(&todo); err != nil {
+		http.Error(w, "Invalid input", http.StatusBadRequest)
+		return
+	}
+
+	if err := todo.Validate(); err != nil {
+		http.Error(w, fmt.Sprintf("Invalid data: %s", err.Error()), http.StatusBadRequest)
+		return
+	}
+
+	isErr := todoRepo.UpdateTodoById(id, &todo)
+
+	if isErr != nil {
+		http.Error(w, "Error updating todo", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(models.Response{
+		Success: true,
+		Data:    todo,
+	}); err != nil {
 		return
 	}
 }

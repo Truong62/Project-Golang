@@ -28,3 +28,13 @@ func (r *TodoRepository) GetTodosBySearch(keySearch string, todos *[]models.Todo
 	config.DB.Find(&allTodos)
 	return result.Error
 }
+
+func (r *TodoRepository) UpdateTodoById(id string, todo *models.Todo) error {
+	result := config.DB.Model(&models.Todo{}).Where("id = ?", id).Updates(todo)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	err := config.DB.First(todo, id).Error
+	return err
+}

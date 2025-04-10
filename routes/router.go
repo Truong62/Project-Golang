@@ -18,6 +18,15 @@ func SetupRoutes() {
 		}
 	})
 
+	http.HandleFunc("/todos/{id}", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPut:
+			controllers.PutTodoById(w, r)
+		default:
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		_, err := fmt.Fprintln(w, "Hello!!! Go running ... 🚀")
 		if err != nil {
