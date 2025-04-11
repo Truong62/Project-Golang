@@ -2,7 +2,6 @@ module Project-Golang
 
 go 1.23.0
 
-
 require (
 	github.com/go-playground/validator/v10 v10.17.0
 	github.com/joho/godotenv v1.5.1

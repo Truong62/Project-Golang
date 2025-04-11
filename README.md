@@ -89,7 +89,7 @@ go mod tidy
 
 1. Create `.ENV` file from template:
    ```sh
-   cp .env.example .ENV
+   cp .ENV.example .ENV
    ```
 
 2. Edit the `.ENV` file with your information
