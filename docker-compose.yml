@@ -1,10 +1,15 @@
-version: '3.8'
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      target: dev
+    environment:
+        - ENV=dev
+    working_dir: /app
     ports:
       - "${PORT}:${PORT}"
+    volumes:
+      - .:/app
     depends_on:
       - db
     env_file:

@@ -19,7 +19,6 @@ COPY . .
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/main.go
 
-# Final stage
 FROM alpine:latest
 
 WORKDIR /app
@@ -39,3 +38,23 @@ EXPOSE 8080
 # Command to run the application
 CMD ["/app/main"]
 
+# ------------------------------
+# Dev Stage (Chỉ dành cho môi trường phát triển)
+# ------------------------------
+FROM golang:1.23-alpine AS dev
+
+# Thiết lập thư mục làm việc trong container
+WORKDIR /app
+
+# Cài đặt các công cụ cần thiết cho phát triển (git, bash, curl) và công cụ air để reload ứng dụng
+RUN apk add --no-cache git bash curl \
+    && go install github.com/air-verse/air@v1.61.7
+
+# Copy file cấu hình air
+COPY .air.toml ./
+
+# Expose port 8080 cho việc phát triển
+EXPOSE 8080
+
+# Lệnh chạy cho môi trường phát triển
+CMD ["air"]
