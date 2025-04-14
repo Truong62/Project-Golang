@@ -5,3 +5,8 @@ type User struct {
 	Email    string `gorm:"uniqueIndex"`
 	Password string
 }
+
+type AuthRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}

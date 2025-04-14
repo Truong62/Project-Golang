@@ -37,8 +37,10 @@ func ConnectDatabase() {
 	//save database global
 	DB = db
 
-	err = db.AutoMigrate(&models.Todo{})
+	// Auto migrate models
+	err = db.AutoMigrate(&models.Todo{}, &models.User{})
 	if err != nil {
+		log.Printf("Migration error: %v", err)
 		return
 	}
 }

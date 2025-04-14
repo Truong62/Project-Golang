@@ -129,6 +129,85 @@ go mod tidy
 
 ---
 
+## 🔐 Authentication
+
+### Register a new user
+```sh
+POST /register
+```
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": "Create account success"
+}
+```
+
+### Login
+```sh
+POST /login
+```
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "yourpassword"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+### Using JWT Token for Authentication
+
+After receiving the token from the login API, you need to include it in the `Authorization` header for all protected API requests:
+
+```
+Authorization: Bearer YOUR_TOKEN_HERE
+```
+
+**Example with cURL:**
+```sh
+curl -X GET http://localhost:8080/todos \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+**Example with JavaScript Fetch:**
+```javascript
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+
+fetch('http://localhost:8080/todos', {
+  method: 'GET',
+  headers: {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
+If you don't include a valid token, you'll receive a `401 Unauthorized` error.
+
+---
+
 ## 🛠️ Development
 
 ### 🧪 Run Tests
