@@ -9,7 +9,7 @@ services:
     ports:
       - "${PORT}:${PORT}"
     volumes:
-      - .:/app
+      - ./:/app
     depends_on:
       - db
     env_file:
