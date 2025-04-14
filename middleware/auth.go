@@ -9,22 +9,22 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-// Key để lưu thông tin user vào context
+// Key to store user information in context
 type contextKey string
 
 const UserIDKey contextKey = "user_id"
 
-// AuthMiddleware xác thực JWT token trước khi cho phép truy cập API
+// AuthMiddleware authenticate JWT token before allowing access to API
 func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// Lấy token từ header Authorization
+		// Get token from Authorization header
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			http.Error(w, "Authorization header is required", http.StatusUnauthorized)
 			return
 		}
 
-		// Kiểm tra định dạng Bearer token
+		// Check Bearer token format
 		bearerToken := strings.Split(authHeader, " ")
 		if len(bearerToken) != 2 || strings.ToLower(bearerToken[0]) != "bearer" {
 			http.Error(w, "Invalid token format", http.StatusUnauthorized)
@@ -34,9 +34,9 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		tokenString := bearerToken[1]
 		jwtSecret := []byte(os.Getenv("JWT_SECRET"))
 
-		// Parse và xác thực token
+		// Parse and authenticate token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			// Kiểm tra thuật toán ký
+			// Check signing method
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, jwt.ErrSignatureInvalid
 			}
@@ -48,29 +48,29 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// Lấy thông tin user từ token
+		// Get user information from token
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
 			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 			return
 		}
 
-		// Lưu user_id vào context để sử dụng trong handler
+		// Save user_id to context to use in handler
 		userId, ok := claims["user_id"]
 		if !ok {
 			http.Error(w, "Invalid token claims", http.StatusUnauthorized)
 			return
 		}
 
-		// Tạo context mới với thông tin user
+		// Create new context with user information
 		ctx := context.WithValue(r.Context(), UserIDKey, userId)
 
-		// Gọi đến handler tiếp theo với context đã cập nhật
+		// Call next handler with updated context
 		next(w, r.WithContext(ctx))
 	}
 }
 
-// GetUserIDFromContext lấy user ID từ context
+// GetUserIDFromContext get user ID from context
 func GetUserIDFromContext(ctx context.Context) (float64, bool) {
 	userId, ok := ctx.Value(UserIDKey).(float64)
 	return userId, ok
