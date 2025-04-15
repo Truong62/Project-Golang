@@ -82,6 +82,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create JWT token
+	jwtSecret := []byte(os.Getenv("JWT_SECRET"))
 	token, err := utils.GenerateJWT(user.ID, jwtSecret)
 	if err != nil {
 		http.Error(w, "Authentication error", http.StatusInternalServerError)

@@ -16,6 +16,10 @@ func main() {
 		log.Println("error not read .env")
 	}
 
+	// Log JWT Secret for debugging
+	jwtSecret := os.Getenv("JWT_SECRET")
+	log.Printf("Loaded JWT_SECRET (length: %d): %s", len(jwtSecret), jwtSecret)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

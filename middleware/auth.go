@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -34,6 +35,10 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		tokenString := bearerToken[1]
 		jwtSecret := []byte(os.Getenv("JWT_SECRET"))
 
+		// For debugging
+		secretLen := len(jwtSecret)
+		log.Printf("JWT Secret length: %d", secretLen)
+
 		// Parse and authenticate token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// Check signing method
@@ -44,6 +49,7 @@ func AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 		})
 
 		if err != nil || !token.Valid {
+			log.Printf("JWT Error: %v, Token Valid: %v", err, token.Valid)
 			http.Error(w, "Invalid or expired token", http.StatusUnauthorized)
 			return
 		}
