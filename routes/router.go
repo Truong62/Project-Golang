@@ -8,11 +8,9 @@ import (
 )
 
 func SetupRoutes() {
-	// Auth routes không cần xác thực
 	http.HandleFunc("/register", controllers.Register)
 	http.HandleFunc("/login", controllers.Login)
 
-	// Protected routes yêu cầu xác thực
 	http.HandleFunc("/todos", func(w http.ResponseWriter, r *http.Request) {
 		handler := middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
 			switch r.Method {
@@ -27,7 +25,12 @@ func SetupRoutes() {
 		handler(w, r)
 	})
 
-	http.HandleFunc("/todos/{id}", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/todos/", func(w http.ResponseWriter, r *http.Request) {
+		path := r.URL.Path
+		if path == "/todos" || path == "/todos/" {
+			return
+		}
+
 		handler := middleware.AuthMiddleware(func(w http.ResponseWriter, r *http.Request) {
 			switch r.Method {
 			case http.MethodPut:
@@ -43,6 +46,10 @@ func SetupRoutes() {
 
 	// Public route
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
 		_, err := fmt.Fprintln(w, "Hello!!! Go running ... 🚀")
 		if err != nil {
 			return
