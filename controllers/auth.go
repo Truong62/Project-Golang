@@ -16,27 +16,37 @@ var Sessions = map[string]string{}
 func Register(w http.ResponseWriter, r *http.Request) {
 	var req models.AuthRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Invalid request body"))
 		return
 	}
 
 	if !utils.IsValidEmail(req.Email) {
-		http.Error(w, "Email error", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Email error"))
 		return
 	}
 
 	if !utils.IsValidPassword(req.Password) {
-		http.Error(w, "Password error", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Password error"))
 		return
 	}
 
 	existingUser, err := repository.GetUserByEmail(req.Email)
 	if err != nil && err != gorm.ErrRecordNotFound {
-		http.Error(w, "Sever error", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Server error"))
 		return
 	}
 	if existingUser != nil {
-		http.Error(w, "Email already exists", http.StatusConflict)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusConflict)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Email already exists"))
 		return
 	}
 
@@ -44,7 +54,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{Email: req.Email, Password: hashed}
 
 	if err := repository.CreateUser(user); err != nil {
-		http.Error(w, "Create account error", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Create account error"))
 		return
 	}
 
@@ -57,27 +69,35 @@ var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 func Login(w http.ResponseWriter, r *http.Request) {
 	var req models.AuthRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Invalid request body"))
 		return
 	}
 
 	// validate email
 	if !utils.IsValidEmail(req.Email) {
-		http.Error(w, "Email error", http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Email error"))
 		return
 	}
 
 	// get user by email
 	user, err := repository.GetUserByEmail(req.Email)
 	if err != nil {
-		http.Error(w, "Email or password error", http.StatusUnauthorized)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Email or password error"))
 		return
 	}
 
 	// validate password
 	hashedInputPassword := utils.HashPassword(req.Password)
 	if user.Password != hashedInputPassword {
-		http.Error(w, "Email or password error", http.StatusUnauthorized)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Email or password error"))
 		return
 	}
 
@@ -85,7 +105,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	jwtSecret := []byte(os.Getenv("JWT_SECRET"))
 	token, err := utils.GenerateJWT(user.ID, jwtSecret)
 	if err != nil {
-		http.Error(w, "Authentication error", http.StatusInternalServerError)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(models.ErrorResponse("Authentication error"))
 		return
 	}
 
