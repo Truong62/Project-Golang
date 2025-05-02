@@ -2,18 +2,30 @@
 
 root = "."
 tmp_dir = "tmp"
+testdata_dir = "testdata"
 
 [build]
-cmd = "go build -o ./tmp/main.exe ./cmd"
-bin = "tmp/main.exe"
-delay = 1000
-exclude_dir = ["assets", "tmp", "vendor", "test"]
+cmd = "go build -o ./tmp/main ./cmd/main.go"
+bin = "./tmp/main"
+full_bin = ""
 include_ext = ["go", "tpl", "tmpl", "html"]
-include = ["**/*.go"]
-exclude_regex = ["_test.go"]
+include_dir = ["cmd", "models", "routes", "controllers", "middleware", "config", "repository", "utils"]
+exclude_dir = ["assets", "tmp", "vendor", "test"]
+exclude_file = []
+exclude_regex = ["_test\\.go"]
+exclude_unchanged = false
+follow_symlink = true
+log = "air.log"
+delay = 100
+stop_on_error = true
+send_interrupt = true
+kill_delay = "0s"
+poll = true
+poll_interval = 300
 
 [log]
 time = true
+main_only = false
 
 [color]
 main = "magenta"

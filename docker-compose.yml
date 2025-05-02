@@ -1,15 +1,18 @@
+version: "3.7"
 services:
   app:
     build:
       context: .
       target: dev
     environment:
-        - ENV=dev
+      - ENV=dev
+      - GOPATH=/go
     working_dir: /app
     ports:
       - "${PORT}:${PORT}"
     volumes:
-      - ./:/app
+      - ./:/app:delegated
+      - go-modules:/go/pkg/mod
     depends_on:
       - db
     env_file:
@@ -18,7 +21,7 @@ services:
       - app-network
 
   db:
-    image: postgres:14
+    image: postgres:latest
     ports:
       - "5433:5432"
     environment:
@@ -35,4 +38,5 @@ networks:
     driver: bridge
 
 volumes:
-  postgres_data: 
+  postgres_data:
+  go-modules: 

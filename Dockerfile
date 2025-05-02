@@ -7,6 +7,8 @@ RUN apk add --no-cache git
 # Set working directory
 WORKDIR /app
 
+ADD . /app
+
 # Copy dependency files
 COPY go.mod go.sum ./
 
@@ -45,11 +47,18 @@ FROM golang:1.23-alpine AS dev
 
 WORKDIR /app
 
-RUN apk add --no-cache git bash curl \
-    && go install github.com/air-verse/air@v1.61.7
+RUN apk add --no-cache git bash curl && \
+    go install github.com/air-verse/air@latest
 
 COPY .air.toml ./
 
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+
+VOLUME ["/app"]
+
 EXPOSE 8080
 
-CMD ["air"]
+CMD ["air", "-c", ".air.toml"]
