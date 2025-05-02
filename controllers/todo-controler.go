@@ -21,8 +21,6 @@ func CreateTodoList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("DEBUG: Decoded todo: %+v", todo)
-
 	if err := todo.Validate(); err != nil {
 		http.Error(w, fmt.Sprintf("Invalid data: %s", err.Error()), http.StatusBadRequest)
 		return
@@ -31,7 +29,6 @@ func CreateTodoList(w http.ResponseWriter, r *http.Request) {
 	isErr := todoRepo.Create(&todo)
 
 	if isErr != nil {
-		log.Printf("DEBUG: Error creating todo: %v", isErr)
 		http.Error(w, "error create tode", http.StatusInternalServerError)
 		return
 	}

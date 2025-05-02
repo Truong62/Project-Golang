@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .form-container {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .todo-list {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .todo-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        .index {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        #api-logs {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Todo API Test</h1>
+    
+    <div class="container">
+        <div class="form-container">
+            <h2>Create New Todo</h2>
+            <form id="todo-form">
+                <div>
+                    <label for="title">Title (min 10 characters):</label>
+                    <input type="text" id="title" name="title" required minlength="10">
+                </div>
+                <div>
+                    <label for="token">JWT Token:</label>
+                    <textarea id="token" name="token" rows="3" required></textarea>
+                </div>
+                <button type="submit">Create Todo</button>
+            </form>
+        </div>
+        
+        <div class="todo-list">
+            <h2>Todo List</h2>
+            <button id="refresh-btn">Refresh List</button>
+            <div id="todos-container">
+                <p>No todos loaded yet</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="api-logs">
+        <h3>API Logs</h3>
+        <pre id="logs"></pre>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080';
+        const logElement = document.getElementById('logs');
+        
+        function log(message) {
+            logElement.textContent += `${new Date().toLocaleTimeString()}: ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+        
+        // Create a new todo
+        document.getElementById('todo-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const token = document.getElementById('token').value;
+            
+            if (title.length < 10) {
+                log('Error: Title must be at least 10 characters');
+                return;
+            }
+            
+            try {
+                log(`Creating todo with title: ${title}`);
+                const response = await fetch(`${API_URL}/todos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title })
+                });
+                
+                const data = await response.json();
+                log(`Response: ${JSON.stringify(data)}`);
+                
+                if (response.ok) {
+                    document.getElementById('title').value = '';
+                    fetchTodos();
+                }
+            } catch (error) {
+                log(`Error: ${error.message}`);
+            }
+        });
+        
+        // Fetch all todos
+        async function fetchTodos() {
+            const token = document.getElementById('token').value;
+            if (!token) {
+                log('Error: JWT Token is required');
+                return;
+            }
+            
+            try {
+                log('Fetching todos...');
+                const response = await fetch(`${API_URL}/todos`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const todos = await response.json();
+                log(`Fetched ${todos.length} todos`);
+                
+                const container = document.getElementById('todos-container');
+                if (todos.length === 0) {
+                    container.innerHTML = '<p>No todos found</p>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                todos.forEach(todo => {
+                    container.innerHTML += `
+                        <div class="todo-item">
+                            <span class="index">${todo.index}</span>
+                            <strong>${todo.title}</strong>
+                            <div>
+                                <small>ID: ${todo.id}</small> | 
+                                <small>Created: ${new Date(todo.created_at).toLocaleString()}</small> | 
+                                <small>Status: ${todo.completed ? 'Completed' : 'Pending'}</small>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                log(`Error: ${error.message}`);
+            }
+        }
+        
+        // Refresh todos
+        document.getElementById('refresh-btn').addEventListener('click', fetchTodos);
+        
+        // Initial log
+        log('Todo API Test page loaded. Please provide a JWT token and create some todos.');
+    </script>
+</body>
+</html> 

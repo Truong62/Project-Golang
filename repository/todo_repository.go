@@ -9,12 +9,11 @@ import (
 type TodoRepository struct{}
 
 func (r *TodoRepository) Create(todo *models.Todo) error {
-	result := config.DB.Create(todo)
-	return result.Error
+	return todo.Save(config.DB)
 }
 
 func (r *TodoRepository) GetAllTodos(todos *[]models.Todo) error {
-	result := config.DB.Find(todos)
+	result := config.DB.Order("index ASC").Find(todos)
 	return result.Error
 }
 
