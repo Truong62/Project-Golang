@@ -29,7 +29,7 @@ func CreateTodoList(w http.ResponseWriter, r *http.Request) {
 	isErr := todoRepo.Create(&todo)
 
 	if isErr != nil {
-		http.Error(w, "error create tode", http.StatusInternalServerError)
+		http.Error(w, "error create todo", http.StatusInternalServerError)
 		return
 	}
 
